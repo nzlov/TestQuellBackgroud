@@ -16,10 +16,12 @@ import ekaiser.nzlov.data.Assets;
 public class MyGame implements ApplicationListener {
 	private OrthographicCamera camera;
 	private SpriteBatch batch;
-	
+
 	private Vector3 v;
-	
+	private Vector3 z;
+
 	private boolean isMove = true;
+	private boolean isScale = true;
 	
 	@Override
 	public void create() {		
@@ -31,11 +33,13 @@ public class MyGame implements ApplicationListener {
 		camera = new OrthographicCamera(256,256);
 		batch = new SpriteBatch();
 
-		v = new Vector3(128, 128, 0);
+		v = new Vector3(128, 128, 1);
+		z = new Vector3(0,0, 1);
 
 		Assets.s1.setPosition(64, 64);
 		Assets.s2.setPosition(320, 64);
 		Assets.s3.setPosition(576, 64);
+		Assets.s3.setScale(0.1f);
 	}
 
 	@Override
@@ -51,25 +55,35 @@ public class MyGame implements ApplicationListener {
 
 
 		if(Gdx.input.justTouched()){
-			if(isMove){
-				v.add(256, 0, 0);
+			if(Gdx.input.getX()<Gdx.graphics.getWidth()/2){
+				if(isMove){
+					v.add(256, 0, 0);
+				}else{
+					v.add(-256, 0, 0);
+				}
+				if(v.x<128){
+					v.x = 128;
+					v.add(256, 0, 0);
+					isMove = !isMove;
+				}
+				if(v.x > 640){
+					v.x = 640;
+					v.add(-256, 0, 0);
+					isMove = !isMove;
+				}
 			}else{
-				v.add(-256, 0, 0);
-			}
-			if(v.x<128){
-				v.x = 128;
-				v.add(256, 0, 0);
-				isMove = !isMove;
-			}
-			if(v.x > 640){
-				v.x = 640;
-				v.add(-256, 0, 0);
-				isMove = !isMove;
+				if(isScale){
+					v.add(0, 0, -0.9f);
+				}else{
+					v.add(0, 0, 0.9f);
+				}
+				isScale = !isScale;
 			}
 		}
 		
 		camera.position.lerp(v, 5f * Math.min(0.06f, Gdx.graphics.getDeltaTime()));
-		
+		z.lerp(v, 5f * Math.min(0.06f, Gdx.graphics.getDeltaTime()));
+		camera.zoom = z.z;
 		
 		camera.update();
 		batch.setProjectionMatrix(camera.combined);
