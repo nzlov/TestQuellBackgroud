@@ -4,14 +4,19 @@ import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.Texture.TextureFilter;
-import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.Button;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 
 import ekaiser.nzlov.data.Assets;
+import ekaiser.nzlov.particle.ParticleTouch;
 
 public class MyGame implements ApplicationListener {
 	private OrthographicCamera camera;
@@ -19,12 +24,14 @@ public class MyGame implements ApplicationListener {
 
 	private Vector3 v;
 	private Vector3 z;
+	
 
 	private boolean isMove = true;
 	private boolean isScale = true;
-	
+		
 	@Override
 	public void create() {		
+				
 		Assets.createTexture();
 		
 		float w = Gdx.graphics.getWidth();
@@ -40,6 +47,8 @@ public class MyGame implements ApplicationListener {
 		Assets.s2.setPosition(320, 64);
 		Assets.s3.setPosition(576, 64);
 		Assets.s3.setScale(0.1f);
+		
+		
 	}
 
 	@Override
@@ -53,8 +62,14 @@ public class MyGame implements ApplicationListener {
 		Gdx.gl.glClear(GL10.GL_COLOR_BUFFER_BIT);
 		
 
+		ParticleTouch.InitParticleTouch(batch);
 
 		if(Gdx.input.justTouched()){
+
+			Gdx.app.log("TestQuellReflect", "x:" + Gdx.input.getX()+"y:"+Gdx.input.getY());
+			Vector3 bv = new Vector3(Gdx.input.getX(), Gdx.input.getY(), 0);
+			camera.unproject(bv);
+			Gdx.app.log("TestQuellReflect-batch：", "x:" + bv.x+"y:"+bv.y);
 			if(Gdx.input.getX()<Gdx.graphics.getWidth()/2){
 				if(isMove){
 					v.add(256, 0, 0);
